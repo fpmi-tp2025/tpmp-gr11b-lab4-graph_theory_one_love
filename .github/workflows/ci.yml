@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc g++ gcov lcov libgtest-dev
+          cd /usr/src/gtest && sudo cmake . && sudo make && sudo cp libg* /usr/lib/
+
+      - name: Build project with coverage flags
+        run: |
+          make clean
+          make CFLAGS="-Wall -std=c99 -fprofile-arcs -ftest-coverage -Iinclude"
+
+      - name: Build tests with coverage flags
+        run: |
+          mkdir -p tests/build
+          cd tests/build
+          g++ -fprofile-arcs -ftest-coverage -I../.. -I../include ../test_db.cpp ../../src/db.c -o test_db -lpthread -lgtest
+          g++ -fprofile-arcs -ftest-coverage -I../.. -I../include ../test_queries.cpp ../../src/queries.c ../../src/db.c -o test_queries -lpthread -lgtest
+
+      - name: Run tests
+        run: |
+          cd tests/build
+          ./test_db
+          ./test_queries
+
+      - name: Generate coverage report
+        run: |
+          lcov --capture --directory . --output-file coverage.info
+          lcov --remove coverage.info '/usr/*' --output-file coverage.info
+          lcov --list coverage.info
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
