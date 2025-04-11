@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "db.h"
 #include "queries.h"
+#include "auth.h"
 
 int main() {
     sqlite3 *db = open_database("orangerie.db");
@@ -8,7 +10,13 @@ int main() {
         fprintf(stderr, "Не удалось открыть базу данных.\n");
         return 1;
     }
-
+    
+    if (!perform_authentication(db)) {
+        printf("Доступ запрещен. Завершение работы.\n");
+        close_database(db);
+        return 1;
+    }
+    
     int choice;
     char start_date[11], end_date[11], date[11];
     while(1) {
@@ -16,10 +24,10 @@ int main() {
         printf("1. Сумма полученных денег за период\n");
         printf("2. Композиция с максимальным спросом\n");
         printf("3. Количество заказов по срочности\n");
-        printf("4. Количество использованных цветов по видам за период\n");
+        printf("4. Количество использованных цветов по видам\n");
         printf("5. Проданные композиции и сумма по видам\n");
         printf("6. Внести новый заказ и рассчитать стоимость\n");
-        printf("7. Обновить цену на цветок с проверкой изменения стоимости композиции\n");
+        printf("7. Обновить цену на цветок\n");
         printf("8. Вывести заказы на указанную дату\n");
         printf("0. Выход\n");
         printf("Выберите опцию: ");

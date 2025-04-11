@@ -25,6 +25,7 @@ message(STATUS "Найдена библиотека sqlite3: ${SQLITE3_LIBRARY}"
 set(LIB_SOURCES
     src/db.c
     src/queries.c
+    src/auth.c
 )
 add_library(OrangerieLib ${LIB_SOURCES})
 target_link_libraries(OrangerieLib PUBLIC ${SQLITE3_LIBRARY})
@@ -37,6 +38,7 @@ enable_testing()
 set(TEST_SOURCES
     tests/test_db.cpp
     tests/test_queries.cpp
+    tests/test_auth.cpp
 )
 add_executable(runTests ${TEST_SOURCES})
 target_link_libraries(runTests PRIVATE OrangerieLib gtest_main pthread)
