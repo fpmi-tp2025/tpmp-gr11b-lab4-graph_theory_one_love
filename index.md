@@ -11,4 +11,4 @@
 - [Дополнительная спецификация](./additional_spec.md)
 - [Схема базы данных](./database_schema.md)
 - [Презентация проекта](./presentation.md)
-- [Учебные репозитории)](./useful_links.md)
+- [Учебные репозитории](./useful_links.md)
