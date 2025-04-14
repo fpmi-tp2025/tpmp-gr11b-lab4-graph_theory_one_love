@@ -232,7 +232,6 @@ int insert_order_with_payment(sqlite3 *db, const char* order_date, const char* f
 int update_flower_price(sqlite3 *db, int flower_id, double new_price) {
     sqlite3_stmt *stmt;
     int rc;
-    // Получение старой цены цветка
     const char *sql_old_price = "SELECT price FROM ORANGERIE_FLOWERS WHERE flower_id = ?;";
     rc = sqlite3_prepare_v2(db, sql_old_price, -1, &stmt, NULL);
     if(rc != SQLITE_OK) {
